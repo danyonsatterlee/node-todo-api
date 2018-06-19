@@ -21,6 +21,16 @@ app.post('/todos', (req, res)=>{
     });
 });
 
+app.get('/todos', (req, res)=>{
+    Todo.find().then((todos)=>{
+        res.send({todos})
+
+    }, (err) =>{
+        res.status(400).send(err);
+    });
+
+});
+
 app.listen(3003, ()=>{
     console.log('started on part 3003');
 });
