@@ -196,10 +196,5 @@ describe('PATCH /todos/:id', ()=>{
                 expect(res.body.todo.completedAt).toBeFalsy();
             })
             .end(done);
-        // grab id of second todo
-        //update text to something dif
-        //set completed to false
-        //expect 200
-        //text is changed, completed is false, completedAt is null.toBeFAlsy
     });
 })
