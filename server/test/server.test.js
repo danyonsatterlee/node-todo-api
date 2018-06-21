@@ -185,10 +185,10 @@ describe('PATCH /todos/:id', ()=>{
     });
 });
 
-describe('GET /user/me', ()=>{
+describe('GET /users/me', ()=>{
     it('should return user if authenticated', (done)=>{
         request(app)
-            .get('/user/me')
+            .get('/users/me')
             .set('x-auth', users[0].tokens[0].token)
             .expect(200)
             .expect((res)=>{
@@ -200,7 +200,7 @@ describe('GET /user/me', ()=>{
     it('should return 401 if not authenticated', (done)=>{
         var newId = new ObjectID().toHexString();
         request(app)
-            .get('/user/me')
+            .get('/users/me')
             .expect(401)
             .expect((res)=>{
                 expect(res.body).toEqual({})
