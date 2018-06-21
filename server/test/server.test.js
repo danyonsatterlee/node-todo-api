@@ -154,7 +154,7 @@ describe('PATCH /todos/:id', ()=>{
                 
                 expect(res.body.todo.text).toBe(text)
                 expect(res.body.todo.completed).toBe(true)
-                // expect(res.body.todo.completedAt).toBeA('number')
+                expect(typeof res.body.todo.completedAt).toBe('number')
             })
             .end(done);
 
@@ -258,5 +258,59 @@ describe('POST /users', ()=>{
             .send({email, password})
             .expect(400)
             done();
+    });
+})
+
+
+describe('POST /users/login', () => {
+    it('should login user and return auth token', (done) => {
+      request(app)
+        .post('/users/login')
+        .send({
+          email: users[1].email,
+          password: users[1].password
+        })
+        .expect(200)
+        .expect((res) => {
+          expect(res.headers['x-auth']).toBeTruthy();
+        })
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          
+          User.findById(users[1]._id).then((user) => {
+            expect(user.toObject().tokens[0]).toMatchObject({
+              access: 'auth',
+              token: res.headers['x-auth']
+            });
+            done();
+          }).catch((e) => done(e));
+        });
+    });
+
+    it('should reject invalid login', (done) =>{
+        request(app)
+        .post('/users/login')
+        .send({
+          email: users[1].email,
+          password: 'bogus'
+        })
+        .expect(400)
+        .expect((res) => {
+          expect(res.headers['x-auth']).toBeFalsy();
+        })
+        .end((err, res) => {
+          if (err) {
+            return done(err);
+          }
+          
+          User.findById(users[1]._id).then((user) => {
+            expect(user.tokens.length).toBe(0)
+   
+            done();
+          }).catch((e) => done(e));
+        });
+           
     });
 })
